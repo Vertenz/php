@@ -1,171 +1,205 @@
-<?php 
-    $numberOfLesson = 'PHP Lesson 2';
-    $date = date("d F Y");
-    $dateHours = date("G");
+<?php
 
-    function showTime() {
-        $dateHours = date("G");
-        $dateMinutes = date("i");
-        $minutesToONeNumber = $dateMinutes; // чтобы в дальнейшем изменять эту переменную, не меняя колличество минут
-        $hoursName = '';
-        $minutesName = '';
-
-        if ($dateHours == 1 || $dateHours == 21) {
-            $hoursName = 'час';
-        } elseif ($dateHours > 1 && $dateHours < 5 || $dateHours >= 22 && $dateHours <= 24) {
-            $hoursName = 'часа';
-        } elseif ($dateHours >= 5 && $dateHours <= 20 || $dateHours == 0) {
-            $hoursName = 'часов';
-        } 
-
-        /**
-         Приводим колличесво минут к натуральному числу, чтобы от него отталкиваться по склонению
-         */
-        
-        while ($minutesToONeNumber > 10) {
-            $minutesToONeNumber -= 10;
-        } 
-
-        if ($minutesToONeNumber == 1) {
-            $minutesName = 'минута';
-        } elseif ($minutesToONeNumber > 1 && $minutesToONeNumber <= 4) {
-            $minutesName = 'минуты';
-        } elseif ($minutesToONeNumber > 4) {
-            $minutesName = 'минут';
-        }
-
-        return $dateHours . ' ' . $hoursName . " " . $dateMinutes . " " . $minutesName;
-    }
-
-    function exercise1($a, $b) {
-        if (is_int($a) && is_int($b)) {
-            if ($a >= 0 && $b >= 0) {
-                echo(abs($a - $b));
-            } elseif ($a <= 0 && $b <= 0) {
-                echo($a * $b);
-            } elseif ($a >= 0 && $b <= 0 || $a <= 0 && $b >= 0) {
-                echo($a + $b);
-            }
-        } else {
-            echo("Not a number");
-        }
-    }
-
-    function plus($a, $b) {
-        return ($a + $b);
-    }
-
-    function minus($a, $b) {
-        return ($a - $b);
-    }
-
-    function times($a, $b) {
-        return ($a * $b);
-    }
-
-    function divided($a, $b) {
-        return ($a / $b);
-    }
-
-    function exercise4($a, $b, $operation) {
-        switch ($operation) {
-            case 'Add':
-                return ($a + $b);
-                break;
-            case 'Subtract':
-                return ($a - $b);
-                break;
-            case 'Multiply':
-                return ($a * $b);
-                break;
-            case 'Divide':
-                return ($a / $b);
-                break;
-        }
-    }
-
-    function power($val, $pow) {
-        if ($pow <= 0) {
-            return ('Не правильно указана степень');
-        }
-        if ($pow == 1 ) {
-            return $val; 
-        } else {
-            $val *= $val;
-            return power($val, $pow - 1); 
-        } 
-    }
-
+ $number = 0; //для первого задания
+ $number2 = 0; //для второго задания
+ 
+ $state = [
+     'Московская область' => ['Москва', 'Зеленоград', 'Клин'],
+     'Ленинградская область' => ['Санкт-Петербург', 'Всеволожск', 'Павловск', 'Кронштадт'],
+     'Рязанская область' => ['Новомичуринск', 'Рыбное', 'Ряжск', 'Рязань']
+ ];
+ 
+ $transcription = [
+     'а' => 'a',
+     'А' => 'A',
+     'б' => 'b',
+     'Б' => 'B',
+     'в' => 'v',
+     'В' => 'V',
+     'г' => 'g',
+     'Г' => 'G',
+     'д' => 'd',
+     'Д' => 'D',
+     'я' => 'ya',
+     'Я' => 'Ya'
+ ];
+ 
+ $userText = $_POST['text'];
+ 
+function spaceRemove($text) {
+              $text = explode(' ', $text);
+     		  foreach ($text as $key => $word) {
+		      echo "$word";
+		      if (count($text) != $key + 1) {
+		          echo "_";
+		      }
+		  }
+ };
+ 
+ 
+$menu = [
+  'lesson 1' => ['ex1', 'ex2'],
+  'lessin 2' => ['ex1', 'ex2'],
+  'Lesson 3' => ['ex1', 'ex2', 'ex3', 'ex4', 'ex5', 'ex6', 'ex7', 'ex8', 'ex9'] 
+];
+ 
 ?>
+
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?=$numberOfLesson?></title>
+<meta charset="UTF-8">
+<title>Lesson3</title>
 </head>
 <body>
-    <h1> 
-        Объявить две целочисленные переменные $a и $b и задать им произвольные начальные значения. 
-            Затем написать скрипт, который работает по следующему принципу:
-            если $a и $b положительные, вывести их разность;
-            если $а и $b отрицательные, вывести их произведение;
-            если $а и $b разных знаков, вывести их сумму;
-    </h1>
+	<nav> 
+	<!-- 
+	<nav class="menu center">
+    <ul class="menu__ul">
+        <li class="menu__list">
+            <a href="index.html" class="menu__href">Home</a>
+            <div class="drop">
+                <div class="drop__flex">
+                    <h3 class="drop__h">women</h3>
+                    <ul class="drop__ul">
+                        <li><a href="product-list.html" class="drop__link">Dresses</a></li>
+                        <li><a href="product-list.html" class="drop__link">Tops</a></li>
+                        <li><a href="product-list.html" class="drop__link">Sweaters/Knits</a></li>
+                        <li><a href="product-list.html" class="drop__link">Jackets/Coats</a></li>
+                        <li><a href="product-list.html" class="drop__link">Blazers</a></li>
+                        <li><a href="product-list.html" class="drop__link">Denim</a></li>
+                        <li><a href="product-list.html" class="drop__link">Leggings/Pants</a></li>
+                        <li><a href="product-list.html" class="drop__link">Skirts/Shorts</a></li>
+                        <li><a href="product-list.html" class="drop__link">Accessories</a></li>
+                    </ul>
+	-->
+	  <?php 
+	  echo "<ul>";
+	  foreach ($menu as $title => $subtitle){
+	      echo "<li>$title";
+	      echo "<ul>";
+          foreach ($menu[$title] as $value) {
+              echo "<li>$value</li>";
+          };
+        echo "</ul>";
+        echo "</li>";
+	  }
+	  echo "</ul>";
+	  ?>
+	</nav>
 
-    <h2>A = 16 , B = 21</h1>
-    <h3>Разность равна <?=exercise1(16,21)?></h3>
-
-    <h2>A = -6 , B = -2</h1>
-    <h3>Произведение равно <?=exercise1(-6,-2)?></h3>
-    
-    <h2>A = -54 , B = 7</h1>
-    <h3>Сумма равна <?=exercise1(-54,7)?></h3>
-</br>
-</br>
-
-    <h1>Реализовать основные 4 арифметические операции в виде функций с двумя параметрами. Обязательно использовать оператор return.</h1>
-
-    <h2>4 plus 5 = <?=plus(4,5)?></h2>
-    <h2>7 minus 2 = <?=plus(7,2)?></h2>
-    <h2>5 times 3 = <?=times(5,3)?></h2>
-    <h2>18 divided by 3 = <?=divided(18,3)?></h2>
-
-<br>
-<br>
-    <h1>
-        Реализовать функцию с тремя параметрами: 
-        function mathOperation($arg1, $arg2, $operation), где $arg1, $arg2 – значения аргументов, 
-        $operation – строка с названием операции. В зависимости от переданного значения операции выполнить одну из арифметических операций 
-        (использовать функции из пункта 3) и вернуть полученное значение (использовать switch).
-    </h1>
-
-    <h2>A = 15 , B = 7</h2>
-    <h3>Additiondd = <?=exercise4(15,7,'Add')?></h3>
-    <h3>Subtraction = <?=exercise4(15,7,'Subtract')?></h3>
-    <h3>Multiplication = <?=exercise4(15,7,'Multiply')?></h3>
-    <h3>Division = <?=exercise4(15,7,'Divide')?></h3>
-
-<br>
-<br>
-
-    <h1>*С помощью рекурсии организовать функцию возведения числа в степень. Формат: function power($val, $pow), где $val – заданное число, $pow – степень.</h1>
-
-    <h2>11 raised to the power of 6 = <?=pow(11,6)?></h2>
-    
-<br>
-<br>
-
-    <h1>*Написать функцию, которая вычисляет текущее время и возвращает его в формате с правильными склонениями, например:</h1>
-
-    <h2></h2>
-
-    <footer>
-        <hr/>
-        <?=$date?>
-        <?=showTime()?>
-
-    </footer>
-
+	<h1>С помощью цикла while вывести все числа в промежутке от 0 до 100, которые делятся на 3 без остатка.</h1>
+	<p>
+    	<?php 
+    	   while ($number <= 100) {
+    	       if ($number % 3 == 0){
+    	           echo "$number";
+    	           echo "<br>";
+    	       };
+    	       $number++;
+    	   };
+    	?>
+    </p>
+	<br>
+	<br>
+	<h1>С помощью цикла do…while написать функцию для вывода чисел от 0 до 10, чтобы результат выглядел так:</h1>
+	<pre>
+        0 – ноль.
+        1 – нечетное число.
+        2 – четное число.
+        3 – нечетное число.
+        …
+        10 – четное число.
+	</pre>
+	<p>
+		<?php 
+		  do {
+		      if ($number2 == 0) {
+		          echo "$number2 - ноль";
+		          echo "<br>";
+		      }elseif ($number2 % 2 != 0) {
+		          echo "$number2 - нечетное число.";
+		          echo "<br>";
+		      }else {
+		          echo "$number2 - четное число";
+		          echo "<br>";
+		      };
+		      $number2++;
+		  }while ($number2 <= 10);
+		?>
+	</p>
+	<br>
+	<br>
+	<h1>Объявить массив, в котором в качестве ключей будут использоваться названия областей, а в качестве значений 
+	– массивы с названиями городов из соответствующей области. Вывести в цикле значения массива, чтобы результат был таким:</h1>
+	<pre>
+		Московская область:
+        Москва, Зеленоград, Клин
+        Ленинградская область:
+        Санкт-Петербург, Всеволожск, Павловск, Кронштадт
+        Рязанская область … (названия городов можно найти на maps.yandex.ru)
+	</pre>
+	<p>
+		<?php 
+		  foreach ($state as $key => $city) {
+		      echo "$key область в ней: <br>";
+		      foreach ($state[$key] as $cityName) {
+		          echo "$cityName <br>";
+		      };
+		  };
+		?>
+	</p>
+	<br>
+	<br>
+	<h1>Объявить массив, индексами которого являются буквы русского языка, а значениями – соответствующие латинские буквосочетания (‘а’=> ’a’, ‘б’ => ‘b’, ‘в’ => ‘v’, ‘г’ => ‘g’, …, ‘э’ => ‘e’, ‘ю’ => ‘yu’, ‘я’ => ‘ya’).</h1>
+	<p>
+		<?php 
+		  foreach ($transcription as $rus => $en) {
+		      echo " $rus = $en";
+		}
+		?>
+	</p>
+	<br>
+	<br>
+	<h1>Написать функцию, которая заменяет в строке пробелы на подчеркивания и возвращает видоизмененную строчку.</h1>
+	<form action="index.php" method="post">
+		<p>Введите текст:</p>
+		<input type="text" name="text"/>
+		<input type="submit" />
+	</form>
+	<p>
+		<?php 
+            spaceRemove($userText);
+		?>
+	</p>
+	<br>
+	<br>
+	<h1>*Вывести с помощью цикла for числа от 0 до 9, не используя тело цикла.</h1>
+	<p>
+		<?php 
+		  //for (function i() {$i = 0; echo "$i"}; $i <= 9; $i++);
+		  //for ($i = 0; $i <= 9; echo "$i++");
+		for ($i = 0; $i < 10; print $i++);
+		      
+		?>
+	</p>
+	<br>
+	<br>
+	
+	<h1></h1>
+	<p>
+		<?php 
+		foreach ($state as $key => $value) {
+		    for ($i = 0; $i < count($state[$key]); $i++) {
+		        //для работы с кириллицей
+		        $rightCity = preg_split('//u', $state[$key][$i], 0, PREG_SPLIT_NO_EMPTY);
+		        if ($rightCity[0] == 'К') {
+		            echo implode($rightCity) . "<br>";
+		      }
+		    }
+		}
+		?>
+	</p>
+	
 </body>
 </html>
