@@ -1,82 +1,75 @@
 <?php
-
+//connect to mysql
+$conn = mysqli_connect("localhost", "root", "VvladmirRwh10", "gallery");
+//end of connect
+//require function and vars
 require_once '../config/pathHoldor.php';
+require_once PATH_ENGINE . 'makeDir.php';
+require_once PATH_ENGINE . 'makePreview.php';
+require_once PATH_ENGINE . 'renderImg.php';
+//end of require function and vars
 
+//start of html
+include_once PATH_VIEWS . 'head-to-body.php'; //include teg head & body
 
-include_once PATH_VIEWS . 'head-to-body.php';
+include_once PATH_VIEWS . 'header.php'; //include header
 
-include_once PATH_VIEWS . 'header.php';
-
-include_once PATH_VIEWS . 'form-render.php';
-
-  function makePreview($img){
-    $imagickSrc = new Imagick($img);
-    $compressionList = [Imagick::COMPRESSION_JPEG2000
-    ];
-
-    $imagickDst = new Imagick();
-    $imagickDst->setCompression(80);
-    $imagickDst->setCompressionQuality(80);
-    $imagickDst->newPseudoImage(
-          $imagickSrc->getImageWidth(),
-          $imagickSrc->getImageHeight(),
-          'canvas:white'
-    );
-    $imagickDst->compositeImage(
-        $imagickSrc,
-        Imagick::COMPOSITE_ATOP,
-        0,
-        0
-    );
-    $imagickDst->adaptiveResizeImage(250,250);
-    $imagickDst->setImageFormat("jpg");
-    $imagickDst->writeImage($img);
-
-}
-
-    function recountFiles($path) {
-        $dir = opendir($path);
-        $count = 0;
-        while($file = readdir($dir)){
-            if($file == '.' || $file == '..' || is_dir($path . $file)){
-                continue;
-            }
-            $count++;
-        }
-    }
-
-    function renderImg($path) {
-        $files = scandir($path);
-        foreach ($files as $file) {
-            if (!file_exists($file)) {
-                $imgPath = $file;
-                include PATH_VIEWS . 'galery.php';
-            }
-        }
-    }
+include_once PATH_VIEWS . 'form-render.php'; //include form for load img
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_FILES['pictureToGallery'])) {
-        if (!file_exists(PATH_UPLOADS)) {
-            mkdir(PATH_UPLOADS);
-        };
-        if (!file_exists(PATH_PREVIEW)) {
-            mkdir(PATH_PREVIEW);
-        };
+    $type = $_FILES['pictureToGallery']['type'];
+    if (preg_match("/image/", "$type")) {
+        var_dump($conn);
+        if (isset($_FILES['pictureToGallery'])) {
+            makeDir(PATH_UPLOADS);
+            makeDir(PATH_UPLOADS);
 
-        $imgUploadedName = $_FILES['pictureToGallery']['name'];
 
-        if (move_uploaded_file($_FILES['pictureToGallery']['tmp_name'], PATH_UPLOADS . $imgUploadedName)) {
-            echo "Файл загружен";
+            $imgUploadedName = $_FILES['pictureToGallery']['name'];
+            $href = 'uploads/' . $imgUploadedName;
+            $hrefPreview = 'previews/' . $imgUploadedName;
+            $size = $_FILES['pictureToGallery']['size'];
+            if (!$conn) {
+                var_dump($conn);
+            } else {
+                $sql = "INSERT INTO pictures (href, hrefPreview, size, imgName)
+                            VALUES ('$href', '$hrefPreview', '$size', '$imgUploadedName')";
+                var_dump(mysqli_error($conn)); //#
+                if (!$res = mysqli_query($conn, $sql)) {
+                    echo "<h1>Insert ERROR</h1>";
+                    var_dump(mysqli_error($conn));
+                } else {
+                    move_uploaded_file($_FILES['pictureToGallery']['tmp_name'], PATH_UPLOADS . $imgUploadedName);
+                    echo "Файл загружен";
+                    if (copy(PATH_UPLOADS . $imgUploadedName, PATH_PREVIEW . $imgUploadedName)) {
+                        makePreview(PATH_PREVIEW . $imgUploadedName);
+                    }
+                }
+            }
+            header("Location: /");
+            exit;
         }
-        if (copy(PATH_UPLOADS . $imgUploadedName, PATH_PREVIEW . $imgUploadedName)) {
-            makePreview(PATH_PREVIEW . $imgUploadedName);
-        }
+    } else {
+        echo "
+                <script>
+                alert('Возможно загрузить только изображение');
+                </script>
+            ";
     }
+}
+
+if($sql = mysqli_query($conn, 'SELECT `id`, `hrefPreview` FROM `pictures`')) {
+    while ($result = mysqli_fetch_array($sql)) {
+        $id = $result['id'];
+        $hrefPreview = $result['hrefPreview'];
+        renderImg($id, $hrefPreview);
+    }
+    mysqli_close($conn);
 };
 
 
-include_once PATH_VIEWS . 'close-body-html.php';
-renderImg(PATH_PREVIEW);
 
+include_once PATH_VIEWS . 'close-body-html.php';
+
+//end of HTML
 
