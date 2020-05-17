@@ -1,75 +1,40 @@
 <?php
-//connect to mysql
-$conn = mysqli_connect("localhost", "root", "", "gallery");
-//end of connect
 //require function and vars
-require_once '../config/pathHoldor.php';
-require_once PATH_ENGINE . 'makeDir.php';
-require_once PATH_ENGINE . 'makePreview.php';
-require_once PATH_ENGINE . 'renderImg.php';
+require_once '../config/pathHolder.php';
+require_once PATH_ENGINE . 'db.php';
+require_once PATH_RENDER . 'renderProduct.php';
 //end of require function and vars
 
 //start of html
-include_once PATH_VIEWS . 'head-to-body.php'; //include teg head & body
+include_once PATH_VIEWS . 'open-html-head-body.php'; //include teg head & body
 
-include_once PATH_VIEWS . 'header.php'; //include header
-
-include_once PATH_VIEWS . 'form-render.php'; //include form for load img
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $type = $_FILES['pictureToGallery']['type'];
-    if (preg_match("/image/", "$type")) {
-        var_dump($conn);
-        if (isset($_FILES['pictureToGallery'])) {
-            makeDir(PATH_UPLOADS);
-            makeDir(PATH_UPLOADS);
+include_once PATH_VIEWS . 'header-html.php'; //include header
 
 
-            $imgUploadedName = $_FILES['pictureToGallery']['name'];
-            $href = 'uploads/' . $imgUploadedName;
-            $hrefPreview = 'previews/' . $imgUploadedName;
-            $size = $_FILES['pictureToGallery']['size'];
-            if (!$conn) {
-                var_dump($conn);
-            } else {
-                $sql = "INSERT INTO pictures (href, hrefPreview, size, imgName)
-                            VALUES ('$href', '$hrefPreview', '$size', '$imgUploadedName')";
-                var_dump(mysqli_error($conn)); //#
-                if (!$res = mysqli_query($conn, $sql)) {
-                    echo "<h1>Insert ERROR</h1>";
-                    var_dump(mysqli_error($conn));
-                } else {
-                    move_uploaded_file($_FILES['pictureToGallery']['tmp_name'], PATH_UPLOADS . $imgUploadedName);
-                    echo "Файл загружен";
-                    if (copy(PATH_UPLOADS . $imgUploadedName, PATH_PREVIEW . $imgUploadedName)) {
-                        makePreview(PATH_PREVIEW . $imgUploadedName);
-                    }
-                }
-            }
-            header("Location: /");
-            exit;
-        }
-    } else {
-        echo "
-                <script>
-                alert('Возможно загрузить только изображение');
-                </script>
-            ";
+include_once PATH_VIEWS . 'product-block.php';
+//render product list from DB
+
+
+if (!$conn = getConnection()) {
+    echo "<h1>Error connect</h1>";
+} else {
+    $sql = 'SELECT `id`, `hrefPreview`, `name`, `price`,`type`, `quantity` FROM `product`';
+    if ($products = queryArray($sql)) {
+    foreach ($products as $result) {
+            $id = $result['id'];
+            $hrefPreview = $result['hrefPreview'];
+            $productName = $result['name'];
+            $price = $result['price'];
+            $type = $result['type'];
+            $quantity = $result['quantity'];
+            renderProductList($id, $hrefPreview, $productName,  $price, $type, $quantity);
     }
+    }else echo "<h1>Ошибка чтения данных</h1>";
 }
 
-if($sql = mysqli_query($conn, 'SELECT `id`, `hrefPreview` FROM `pictures`')) {
-    while ($result = mysqli_fetch_array($sql)) {
-        $id = $result['id'];
-        $hrefPreview = $result['hrefPreview'];
-        renderImg($id, $hrefPreview);
-    }
-    mysqli_close($conn);
-};
+
+include_once PATH_VIEWS . 'close-product-block.php';
 
 
-
-include_once PATH_VIEWS . 'close-body-html.php';
-
-//end of HTML
-
+include_once PATH_VIEWS . 'open-html-head-body.php';
+//end of html
