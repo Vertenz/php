@@ -39,3 +39,4 @@ function closeConnection()
     return mysqli_close(getConnection());
 }
 
+
