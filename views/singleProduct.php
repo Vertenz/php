@@ -9,7 +9,11 @@
 
 <div class="buy">
     <p class="buy_price"><?=$productPrice?>$</p>
-    <div class="buy__button"><span>Купить <?=$productName?></span></div>
+    <div class="buy__button"><span> <?=$productName?></span></div>
+    <form action="" method="post">
+        <input type="number" name="quantity">
+        <input type="submit" value="Купить">
+    </form>
 </div>
 
 <form action="/product.php?id=<?=$id?>" enctype="multipart/form-data" method="post" class="comment-form">

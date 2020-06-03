@@ -1,8 +1,9 @@
 <?php
+
 //require function and vars
-require_once '../config/pathHolder.php';
-require_once PATH_ENGINE . 'db.php';
-require_once PATH_RENDER . 'renderProduct.php';
+require_once '../config/require.php';
+requireFor('index');
+session_start();
 //end of require function and vars
 
 //start of html
@@ -36,5 +37,5 @@ if (!$conn = getConnection()) {
 include_once PATH_VIEWS . 'close-product-block.php';
 
 
-include_once PATH_VIEWS . 'open-html-head-body.php';
+include_once PATH_VIEWS . 'close-html-body.php';
 //end of html
