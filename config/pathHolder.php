@@ -7,3 +7,5 @@ define('PATH_UPLOADS', PATH_HOME . 'images/');
 define('PATH_PREVIEW', PATH_HOME . 'imagesPreview/');
 define('PATH_CONFIG', PATH_ROOT . 'config/');
 define('PATH_RENDER', PATH_ROOT . 'render/');
+define('PATH_PAGES', PATH_ROOT . 'pages/');
+define('PATH_SCRIPTS', PATH_HOME . 'scripts/');

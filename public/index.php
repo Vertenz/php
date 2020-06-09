@@ -1,41 +1,36 @@
 <?php
-
+//TODO
+// 1) Посты через другую страницу 25м
+// 2) Сессия отдельно в метод
+// 3) Корзина через сессию
+// 4) Привести все к одной точке входа
 //require function and vars
-require_once '../config/require.php';
-requireFor('index');
-session_start();
+require_once '../engine/varLodaer.php';
+session();
 //end of require function and vars
 
+
 //start of html
-include_once PATH_VIEWS . 'open-html-head-body.php'; //include teg head & body
 
-include_once PATH_VIEWS . 'header-html.php'; //include header
+//render page
+
+if (!$requestUri = preg_replace(['#^/#', "#[?].*#"], "", $_SERVER['REQUEST_URI'])) {
+    $requestUri = 'product';
+    $_SERVER['REQUEST_URI'];
+} //go to product list
+
+$parts = explode("/", $requestUri);
+$page = $parts[0];
+$action = $parts[1] ?? "index";
+
+$scriptName = PATH_PAGES . $page . "/" . $action . ".php";
 
 
-include_once PATH_VIEWS . 'product-block.php';
-//render product list from DB
-
-
-if (!$conn = getConnection()) {
-    echo "<h1>Error connect</h1>";
+if (file_exists($scriptName)) {
+   return include $scriptName;
 } else {
-    $sql = 'SELECT `id`, `hrefPreview`, `name`, `price`,`type`, `quantity` FROM `product`';
-    if ($products = queryArray($sql)) {
-    foreach ($products as $result) {
-            $id = $result['id'];
-            $hrefPreview = $result['hrefPreview'];
-            $productName = $result['name'];
-            $price = $result['price'];
-            $type = $result['type'];
-            $quantity = $result['quantity'];
-            renderProductList($id, $hrefPreview, $productName,  $price, $type, $quantity);
-    }
-    }else echo "<h1>Ошибка чтения данных</h1>";
+    $url = $_SERVER['REQUEST_URI'];
+    echo "Такой страницы нет! $url";
 }
 
-
-include_once PATH_VIEWS . 'close-product-block.php';
-
-
-include_once PATH_VIEWS . 'close-html-body.php';
-//end of html
+//end HTML

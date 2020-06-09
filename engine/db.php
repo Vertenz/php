@@ -24,6 +24,10 @@ function execute(string $sql)
     return mysqli_query(getConnection(), $sql);
 }
 
+function queryAll($sql) {
+    return mysqli_fetch_all(execute($sql), MYSQLI_ASSOC);
+}
+
 function queryArray($sql)
 {
     return mysqli_fetch_all(execute($sql), MYSQLI_ASSOC);
